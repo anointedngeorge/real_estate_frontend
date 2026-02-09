@@ -24,9 +24,10 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { useDashboard } from '@/context/DashboardContext';
 
 const mainNavItems = [
-  { icon: LayoutDashboard, label: 'Overview', path: '/' },
+  { icon: LayoutDashboard, label: 'Overview', path: '/dashboard' },
   { icon: Users, label: 'Users', path: '/users' },
   { icon: UserCheck, label: 'Realtors', path: '/realtors' },
   { icon: UserCircle, label: 'Clients', path: '/clients' },
@@ -49,6 +50,10 @@ export function Sidebar({ className }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [openGroups, setOpenGroups] = useState<string[]>(['main']);
   const location = useLocation();
+
+  const { user } = useDashboard();
+  const fullname = user?.user?.first_name + " " + user?.user?.last_name;
+  
 
   const toggleGroup = (group: string) => {
     setOpenGroups((prev) =>
@@ -155,8 +160,8 @@ export function Sidebar({ className }: SidebarProps) {
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-sidebar-foreground truncate">John Adeyemi</p>
-              <p className="text-xs text-sidebar-muted truncate">Super Admin</p>
+              <p className="text-sm font-medium text-sidebar-foreground truncate">{fullname.toUpperCase()}</p>
+              <p className="text-xs text-sidebar-muted truncate">{user?.user?.role}</p>
             </div>
           )}
         </div>

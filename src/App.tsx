@@ -18,19 +18,24 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 
+import "./lib/interceptors";
+
 const queryClient = new QueryClient();
 
+
 const App = () => (
-  <QueryClientProvider client={queryClient}>
+  <QueryClientProvider client={queryClient} >
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+
+          {/* how do i pass general data like a provider to this route */}
           <Route element={<DashboardLayout />}>
-            <Route path="/" element={<Overview />} />
+            <Route path="/dashboard" element={<Overview />} loader={true} />
             <Route path="/users" element={<Users />} />
             <Route path="/realtors" element={<Realtors />} />
             <Route path="/clients" element={<Clients />} />
@@ -41,6 +46,7 @@ const App = () => (
             <Route path="/marketing" element={<Marketing />} />
             <Route path="/settings" element={<Settings />} />
           </Route>
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

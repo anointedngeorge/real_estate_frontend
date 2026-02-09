@@ -46,6 +46,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+import { get_user_details, useUser } from '@/lib/axios_functions';
+import { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+
 const CHART_COLORS = {
   primary: 'hsl(160, 84%, 39%)',
   secondary: 'hsl(217, 91%, 60%)',
@@ -56,8 +60,13 @@ const CHART_COLORS = {
 
 const pieColors = [CHART_COLORS.primary, CHART_COLORS.secondary, CHART_COLORS.warning];
 
+
+
+
+
 export default function OverviewPage() {
   const stats = mockDashboardStats;
+  
 
   return (
     <div className="space-y-6 animate-fade-in">

@@ -7,30 +7,68 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Checkbox } from "@/components/ui/checkbox";
 import { Building2, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { loginServer } from "@/lib/axios_functions";
+import { useForm } from "react-hook-form";
+import { access } from "fs";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  
+  const handler = async (e: React.FormEvent) => {
+    const username = e['email'];
+    const password = e['password'];
+
     setIsLoading(true);
 
-    // Simulate API call - replace with actual backend integration
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: "Welcome back!",
-        description: "You have successfully signed in.",
+    await loginServer(username, password)
+      .then((data) => {
+        // If login is successful, proceed with navigation
+        setIsLoading(false);
+        toast({
+          title: "Login Message!",
+          description: "You have successfully signed in.",
+        });
+
+        const access_token = data.access_token;
+        const refresh_token = data.refresh_token;
+        const jti = data.jti;
+
+        globalThis.sessionStorage.setItem("real_estate_access_token", access_token);
+        globalThis.sessionStorage.setItem("real_estate_refresh_token", refresh_token);
+        globalThis.sessionStorage.setItem("real_estate_jti", jti);
+        navigate("/dashboard");
+      })
+      .catch((error) => {
+        console.error("Login error:", error);
+        setIsLoading(false);
+        toast({
+          title: "Error Logging In",
+          description: error.message || "An error occurred during login.",
+        });
       });
-      navigate("/");
-    }, 1500);
+
+    // Simulate API call - replace with actual backend integration
+
+    // setTimeout(() => {
+    //   setIsLoading(false);
+    //   toast({
+    //     title: "Welcome back!",
+    //     description: "You have successfully signed in.",
+    //   });
+    //   navigate("/dashboard");
+    // }, 1500);
   };
+
+
+  const { register, handleSubmit, formState: { errors } } = useForm();
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted/30 p-4">
@@ -51,7 +89,7 @@ const Login = () => {
               Enter your credentials to access your account
             </CardDescription>
           </CardHeader>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit(handler)}>
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
@@ -59,8 +97,7 @@ const Login = () => {
                   id="email"
                   type="email"
                   placeholder="admin@arible.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  {...register("email", { required: true })}
                   required
                   className="h-11"
                 />
@@ -80,8 +117,7 @@ const Login = () => {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    {...register("password", { required: true })}
                     required
                     className="h-11 pr-10"
                   />

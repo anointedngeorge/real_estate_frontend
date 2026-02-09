@@ -1,4 +1,4 @@
-import { Bell, Search, HelpCircle } from 'lucide-react';
+import { Bell, Search, HelpCircle, Link } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -9,12 +9,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useDashboard } from '@/context/DashboardContext';
 
 interface TopBarProps {
   sidebarCollapsed?: boolean;
 }
 
 export function TopBar({ sidebarCollapsed }: TopBarProps) {
+  const { user } = useDashboard();
+
+  console.log(user, "use dashboard")
   return (
     <header 
       className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6"
@@ -64,6 +68,31 @@ export function TopBar({ sidebarCollapsed }: TopBarProps) {
             <DropdownMenuItem className="justify-center text-sm text-accent">
               View all notifications
             </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+         <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="relative text-muted-foreground">
+              {/* <Bell className="h-5 w-5" /> */}
+              <img
+              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face"
+              alt="User"
+              className="h-8 w-8 rounded-full object-cover ring-2 ring-sidebar-border"
+            />
+              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-destructive" />
+            </Button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent  align="end" className="w-48 ">
+            {/* <DropdownMenuLabel>Notifications</DropdownMenuLabel> */}
+            <DropdownMenuItem className="flex flex-col items-start gap-1 py-3">
+              <a href='/dashboard' className="font-medium">Profile</a>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="flex flex-col items-start gap-1 py-3">
+              <a href='/dashboard' className="font-medium">Logout</a>
+            </DropdownMenuItem>
+           
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
