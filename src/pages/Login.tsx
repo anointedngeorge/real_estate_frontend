@@ -36,34 +36,23 @@ const Login = () => {
           description: "You have successfully signed in.",
         });
 
-        const access_token = data.access_token;
-        const refresh_token = data.refresh_token;
-        const jti = data.jti;
+        const access_token = data?.access_token;
+        const refresh_token = data?.refresh_token;
+        const jti = data?.jti;
 
         globalThis.sessionStorage.setItem("real_estate_access_token", access_token);
         globalThis.sessionStorage.setItem("real_estate_refresh_token", refresh_token);
         globalThis.sessionStorage.setItem("real_estate_jti", jti);
+
         navigate("/dashboard");
       })
       .catch((error) => {
-        console.error("Login error:", error);
         setIsLoading(false);
         toast({
-          title: "Error Logging In",
+          title: "Invalid Credentials",
           description: error.message || "An error occurred during login.",
         });
       });
-
-    // Simulate API call - replace with actual backend integration
-
-    // setTimeout(() => {
-    //   setIsLoading(false);
-    //   toast({
-    //     title: "Welcome back!",
-    //     description: "You have successfully signed in.",
-    //   });
-    //   navigate("/dashboard");
-    // }, 1500);
   };
 
 

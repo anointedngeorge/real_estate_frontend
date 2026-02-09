@@ -10,7 +10,6 @@ export const useUser = () =>
     queryKey: ["me"],
     queryFn: get_user_details,
     retry: false,
- 
   });
 
 
@@ -28,10 +27,29 @@ export const loginServer = async (username: string, password: string) => {
   }
 };
 
+
+
+
 export const get_user_details = async () => {
   try {
     const response = await api.get("/auth/me");
     return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.detail ?? "Failed to fetch user");
+    }
+    throw error;
+  }
+};
+
+
+
+export const userLogout = async () => {
+  try {
+
+    const response = await api.post("/auth/signout");
+    return response.data;
+
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data?.detail ?? "Failed to fetch user");
