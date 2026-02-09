@@ -1,6 +1,7 @@
 import { Bell, Search, HelpCircle, Link } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useToast } from "@/hooks/use-toast";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,8 +18,16 @@ interface TopBarProps {
 
 export function TopBar({ sidebarCollapsed }: TopBarProps) {
   const { user } = useDashboard();
+  const { toast } = useToast();
 
-  console.log(user, "use dashboard")
+
+  const logout = () => {
+      toast({
+          title: "Logout Message!",
+          description: "You have successfully signed out.",
+        });
+  }
+
   return (
     <header 
       className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6"
@@ -90,7 +99,8 @@ export function TopBar({ sidebarCollapsed }: TopBarProps) {
               <a href='/dashboard' className="font-medium">Profile</a>
             </DropdownMenuItem>
             <DropdownMenuItem className="flex flex-col items-start gap-1 py-3">
-              <a href='/dashboard' className="font-medium">Logout</a>
+              {/* <a href='/dashboard' >Logout</a> */}
+              <button className="font-medium" onClick={logout} type="button">Logout</button>
             </DropdownMenuItem>
            
           </DropdownMenuContent>

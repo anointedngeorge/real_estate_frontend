@@ -3,13 +3,15 @@ import api from "./http";
 import { useQuery } from "@tanstack/react-query";
 
 
+
+
 export const useUser = () =>
   useQuery({
     queryKey: ["me"],
     queryFn: get_user_details,
     retry: false,
+ 
   });
-
 
 
 

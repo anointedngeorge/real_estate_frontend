@@ -1,8 +1,7 @@
 import api from "./http";
-import { getAccessToken } from "./config";
+import { clearAuth, getAccessToken } from "./config";
 
-// const dt = globalThis.sessionStorage.getItem("real_estate_access_token");
-// console.log(dt, "loading...")
+
 
 api.interceptors.request.use(
   (config) => {
@@ -13,5 +12,20 @@ api.interceptors.request.use(
     return config;
   },
 
-  (error) => Promise.reject(error)
+  (error) => {Promise.reject(error)}
+);
+
+
+
+// RESPONSE INTERCEPTOR
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+    //   clearAuth();
+      globalThis.location.href = "/";
+    }
+    return Promise.reject(error);
+  }
 );

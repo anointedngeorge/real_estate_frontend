@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { TopBar } from "./TopBar";
@@ -6,10 +6,18 @@ import { cn } from "@/lib/utils";
 import { useUser } from "@/lib/axios_functions";
 import { DashboardContext } from "@/context/DashboardContext";
 
+
+
+
 export function DashboardLayout() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { data: user, isLoading, error } = useUser();
-  
+
+  // useEffect(() => {
+  //   setInterval(() => {
+  //     console.log("loading...");
+  //   }, 3000);
+  // }, [])
 
   return (
     <DashboardContext.Provider value={{ user: user }}>

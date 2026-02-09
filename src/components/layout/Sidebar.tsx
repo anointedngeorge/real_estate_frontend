@@ -52,7 +52,9 @@ export function Sidebar({ className }: SidebarProps) {
   const location = useLocation();
 
   const { user } = useDashboard();
-  const fullname = user?.user?.first_name + " " + user?.user?.last_name;
+  
+
+  const fullname = user?.data?.first_name + " " + user?.data?.last_name;
   
 
   const toggleGroup = (group: string) => {
