@@ -25,6 +25,8 @@ export function TopBar({ sidebarCollapsed }: TopBarProps) {
   const { user } = useDashboard();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const fullname = user?.data?.first_name + " " + user?.data?.last_name;
   
 
   const logout = async () => {
@@ -126,9 +128,11 @@ export function TopBar({ sidebarCollapsed }: TopBarProps) {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end" className="w-48 ">
-            {/* <DropdownMenuLabel>Notifications</DropdownMenuLabel> */}
+            <DropdownMenuLabel>
+              <b>{fullname?.toUpperCase()}</b>
+            </DropdownMenuLabel>
             <DropdownMenuItem className="flex flex-col items-start gap-1 py-3">
-              <a href="/dashboard" className="font-medium">
+              <a href="/profile" className="font-medium">
                 Profile
               </a>
             </DropdownMenuItem>

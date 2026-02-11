@@ -49,6 +49,7 @@ interface SidebarProps {
 export function Sidebar({ className }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [openGroups, setOpenGroups] = useState<string[]>(['main']);
+  
   const location = useLocation();
 
   const { user } = useDashboard();

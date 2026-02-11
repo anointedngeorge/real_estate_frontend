@@ -19,6 +19,7 @@ import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 
 import "./lib/interceptors";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const App = () => (
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/marketing" element={<Marketing />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/profile" element={<Profile />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />
