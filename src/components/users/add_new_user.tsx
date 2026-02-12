@@ -40,7 +40,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import type { UserRole } from "@/types";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 const roleLabels: Record<UserRole, string> = {
   super_admin: "Super Admin",
@@ -58,6 +58,7 @@ export const UserRegistration = () => {
   };
 
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors },
@@ -71,8 +72,9 @@ export const UserRegistration = () => {
           Add User
         </Button>
       </DialogTrigger>
-      <form onSubmit={handleSubmit(formSubmitHandler)}>
-        <DialogContent className="sm:max-w-md">
+
+      <DialogContent className="sm:max-w-md">
+        <form onSubmit={handleSubmit(formSubmitHandler)}>
           <DialogHeader>
             <DialogTitle>Add New User</DialogTitle>
             <DialogDescription>
@@ -117,18 +119,28 @@ export const UserRegistration = () => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="role">Role</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select role" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(roleLabels).map(([value, label]) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Controller
+                name="role"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(roleLabels).map(([value, label]) => (
+                        <SelectItem key={value} value={value}>
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
 
             <div className="space-y-2">
@@ -159,8 +171,8 @@ export const UserRegistration = () => {
           <DialogFooter>
             <Button type="submit">Create User</Button>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 };
