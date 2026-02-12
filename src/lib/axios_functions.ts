@@ -3,6 +3,7 @@ import api from "./http";
 import { useQuery } from "@tanstack/react-query";
 import { userProfileUpdate } from "@/interfaces/auth";
 import { systemSettingsInterface } from "@/interfaces/general";
+import { REAL_ESTATE_SETTINGS } from "./constants";
 
 
 
@@ -125,6 +126,15 @@ export const userLogout = async () => {
 };
 
 
+
+export const systemSettings = () => {
+    const settings = globalThis.localStorage.getItem(REAL_ESTATE_SETTINGS);
+    if (settings) {
+        return JSON.parse(settings);
+    }
+
+    return null;
+}
 
 
 

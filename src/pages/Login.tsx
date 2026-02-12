@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Checkbox } from "@/components/ui/checkbox";
 import { Building2, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { loginServer } from "@/lib/axios_functions";
+import { loginServer, systemSettings } from "@/lib/axios_functions";
 import { useForm } from "react-hook-form";
 import { access } from "fs";
 
@@ -21,6 +21,9 @@ const Login = () => {
   const { toast } = useToast();
 
   
+  const settings = systemSettings();
+
+
   const handler = async (e: React.FormEvent) => {
     const username = e['email'];
     const password = e['password'];
@@ -63,11 +66,12 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted/30 p-4">
       <div className="w-full max-w-md">
         {/* Logo & Branding */}
+        
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary mb-4">
             <Building2 className="h-8 w-8 text-primary-foreground" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Arible Estate & Property</h1>
+          <h1 className="text-2xl font-bold text-foreground">{settings?.company_name ?? "Company Title"}</h1>
           <p className="text-muted-foreground mt-1">Admin Dashboard</p>
         </div>
 

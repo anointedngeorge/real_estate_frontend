@@ -25,6 +25,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { useDashboard } from '@/context/DashboardContext';
+import { systemSettings } from '@/lib/axios_functions';
 
 const mainNavItems = [
   { icon: LayoutDashboard, label: 'Overview', path: '/dashboard' },
@@ -53,6 +54,7 @@ export function Sidebar({ className }: SidebarProps) {
   const location = useLocation();
 
   const { user } = useDashboard();
+  const settings = systemSettings();
   
 
   const fullname = user?.data?.first_name + " " + user?.data?.last_name;
@@ -107,8 +109,8 @@ export function Sidebar({ className }: SidebarProps) {
           </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="text-sm font-semibold text-sidebar-foreground">Arible</span>
-              <span className="text-xs text-sidebar-muted">Estate & Property</span>
+              <span className="text-sm font-semibold text-sidebar-foreground">{settings?.company_name}</span>
+              {/* <span className="text-xs text-sidebar-muted">Estate & Property</span> */}
             </div>
           )}
         </div>
