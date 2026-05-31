@@ -3,9 +3,22 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Building2, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { UserRole } from "@/types";
@@ -59,8 +72,10 @@ const Signup = () => {
       setIsLoading(false);
       toast({
         title: "Account created!",
-        description: "Your account has been created successfully. Please sign in.",
+        description:
+          "Your account has been created successfully. Please sign in.",
       });
+
       navigate("/login");
     }, 1500);
   };
@@ -73,13 +88,17 @@ const Signup = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary mb-4">
             <Building2 className="h-8 w-8 text-primary-foreground" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Arible Estate & Property</h1>
+          <h1 className="text-2xl font-bold text-foreground">
+            Arible Estate & Property
+          </h1>
           <p className="text-muted-foreground mt-1">Admin Dashboard</p>
         </div>
 
         <Card className="border-border/50 shadow-xl">
           <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-2xl font-semibold">Create Account</CardTitle>
+            <CardTitle className="text-2xl font-semibold">
+              Create Account
+            </CardTitle>
             <CardDescription>
               Fill in your details to create a new account
             </CardDescription>
@@ -152,7 +171,9 @@ const Signup = () => {
                     <SelectItem value="manager">Manager</SelectItem>
                     <SelectItem value="finance_admin">Finance Admin</SelectItem>
                     <SelectItem value="sales_admin">Sales Admin</SelectItem>
-                    <SelectItem value="marketing_admin">Marketing Admin</SelectItem>
+                    <SelectItem value="marketing_admin">
+                      Marketing Admin
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -191,7 +212,9 @@ const Signup = () => {
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="Confirm your password"
                     value={formData.confirmPassword}
-                    onChange={(e) => handleChange("confirmPassword", e.target.value)}
+                    onChange={(e) =>
+                      handleChange("confirmPassword", e.target.value)
+                    }
                     required
                     className="h-11 pr-10"
                   />
@@ -213,10 +236,15 @@ const Signup = () => {
                 <Checkbox
                   id="terms"
                   checked={acceptTerms}
-                  onCheckedChange={(checked) => setAcceptTerms(checked as boolean)}
+                  onCheckedChange={(checked) =>
+                    setAcceptTerms(checked as boolean)
+                  }
                   className="mt-0.5"
                 />
-                <Label htmlFor="terms" className="text-sm font-normal cursor-pointer leading-relaxed">
+                <Label
+                  htmlFor="terms"
+                  className="text-sm font-normal cursor-pointer leading-relaxed"
+                >
                   I agree to the{" "}
                   <Link to="/terms" className="text-primary hover:underline">
                     Terms of Service
@@ -229,7 +257,11 @@ const Signup = () => {
               </div>
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
-              <Button type="submit" className="w-full h-11" disabled={isLoading}>
+              <Button
+                type="submit"
+                className="w-full h-11"
+                disabled={isLoading}
+              >
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -241,7 +273,10 @@ const Signup = () => {
               </Button>
               <p className="text-sm text-center text-muted-foreground">
                 Already have an account?{" "}
-                <Link to="/login" className="text-primary font-medium hover:underline">
+                <Link
+                  to="/login"
+                  className="text-primary font-medium hover:underline"
+                >
                   Sign in
                 </Link>
               </p>

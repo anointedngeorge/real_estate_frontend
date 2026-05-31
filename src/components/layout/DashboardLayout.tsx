@@ -13,6 +13,8 @@ export function DashboardLayout() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { data: user, isLoading, error } = useUser();
 
+  // console.log(user, "User loading...");
+
   // useEffect(() => {
   //   setInterval(() => {
   //     console.log("loading...");

@@ -28,34 +28,54 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { get_user_details, update_signed_user, useUser } from "@/lib/axios_functions";
+import {
+  get_user_details,
+  update_signed_user,
+  useUser,
+} from "@/lib/axios_functions";
 import { UUID } from "crypto";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { UserProfile } from "@/interfaces/auth";
-import { ResponseInterface } from "@/interfaces/general";
+import { ResponseInterface, UsersListingInterface } from "@/interfaces/general";
+import { useLocation } from "react-router-dom";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
+import { roleLabels } from "@/data/constant";
 
-
-export default function Profile() {
+export default function UserProfilePage() {
   const { user } = useDashboard();
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
+  const [profileData, setProfileData] = useState<UserProfile>();
 
-  const { data, isLoading, error } = useUser();
-  //   const [profileData, setProfile] = useState<userProfile>(data)
-
-  const profileData: UserProfile = data?.data;
-
-  const [form, setForm] = useState<UserProfile>();
-
-  
-  const { register:ProfileRegister, handleSubmit: ProfileHandleSubmit, formState: { errors } } = useForm();
-  const { register:PasswordRegister, handleSubmit: PasswordHandleSubmit, formState: { errors:pass_error } } = useForm();
-  
+  const location = useLocation();
 
   useEffect(() => {
-    setForm(profileData);
-  }, [profileData]);
+    const user = JSON.parse(location.state?.user);
+    // console.log(user, "loading.. state")
+    setProfileData(user);
+  }, [location]);
+
+  const {
+    register: ProfileRegister,
+    handleSubmit: ProfileHandleSubmit,
+    setValue,
+    watch,
+    control,
+    formState: { errors },
+  } = useForm();
+
+  const {
+    register: PasswordRegister,
+    handleSubmit: PasswordHandleSubmit,
+    formState: { errors: pass_error },
+  } = useForm();
 
   const handleSave = () => {
     setIsEditing(false);
@@ -65,20 +85,20 @@ export default function Profile() {
     });
   };
 
-  const profileHandler = async (e:any) => {
-        // console.log("loading...", e)
-        const dt:ResponseInterface = await update_signed_user(e);
-        if (dt.status == true) {
-            globalThis.location.reload()
-        }
-  }
-
+  const profileHandler = async (e: any) => {
+    console.log("loading...", e)
+    const dt: ResponseInterface = await update_signed_user(e);
+    if (dt.status == true) {
+       console.log(dt.message)
+      // globalThis.location.reload();
+    }
+  };
 
   const passwordChangeHandler = async (e: React.FormEvent) => {
-        const password1 = e['password1'];
-        const password2 = e['password2'];
-        console.log("loading...", e, password1, password2)
-  }
+    const password1 = e["password1"];
+    const password2 = e["password2"];
+    console.log("loading...", e, password1, password2);
+  };
 
   const roleLabel = (role: string) =>
     role.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
@@ -166,45 +186,73 @@ export default function Profile() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <form onSubmit={ProfileHandleSubmit(profileHandler)} >
+            <form onSubmit={ProfileHandleSubmit(profileHandler)}>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="firstName">First Name</Label>
                   <Input
                     id="firstName"
-                    defaultValue={form?.first_name}
+                    defaultValue={profileData?.first_name}
                     disabled={!isEditing}
-                    {...ProfileRegister("first_name", {required:true})}
+                    {...ProfileRegister("first_name", { required: true })}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="lastName">Last Name</Label>
                   <Input
                     id="lastName"
-                    defaultValue={form?.last_name}
+                    defaultValue={profileData?.last_name}
                     disabled={!isEditing}
-                    {...ProfileRegister("last_name", {required:true})}
+                    {...ProfileRegister("last_name", { required: true })}
                   />
                 </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-1">
-                {/* <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    defaultValue={form?.email}
-                    disabled={!isEditing}
-                    {...ProfileRegister("email", {required:true})}
+                <div className="space-y-2">
+                  <Label htmlFor="role">Role</Label>
+                  <br />
+
+                  <Controller
+                    name="role"
+                    control={control}
+                    rules={{ required: false }}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        disabled={!isEditing}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select role" />
+                        </SelectTrigger>
+
+                        <SelectContent>
+                          <SelectItem value="all">All Roles</SelectItem>
+
+                          {Object.entries(roleLabels).map(([value, label]) => (
+                            <SelectItem key={value} value={value}>
+                              {label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
                   />
-                </div> */}
+                  {/* <Input
+                    id="role"
+                    type="role"
+                    defaultValue={profileData?.role}
+                    disabled={!isEditing}
+                    {...ProfileRegister("role", {required:true})}
+                  /> */}
+                </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone</Label>
                   <Input
                     id="phone"
-                    defaultValue={form?.phone_number}
+                    defaultValue={profileData?.phone_number}
                     disabled={!isEditing}
-                    {...ProfileRegister("phone_number", {required:true})}
+                    {...ProfileRegister("phone_number", { required: true })}
                   />
                 </div>
               </div>
@@ -228,7 +276,7 @@ export default function Profile() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <form onSubmit={PasswordHandleSubmit(passwordChangeHandler)} >
+            <form onSubmit={PasswordHandleSubmit(passwordChangeHandler)}>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="currentPassword">Current Password</Label>
@@ -238,7 +286,7 @@ export default function Profile() {
                     required={true}
                     disabled={!isEditing}
                     placeholder="••••••••"
-                    {...PasswordRegister("password1", {required:true})}
+                    {...PasswordRegister("password1", { required: true })}
                   />
                 </div>
                 <div className="space-y-2">
@@ -249,7 +297,7 @@ export default function Profile() {
                     required={true}
                     disabled={!isEditing}
                     placeholder="••••••••"
-                    {...PasswordRegister("password2", {required:true})}
+                    {...PasswordRegister("password2", { required: true })}
                   />
                 </div>
               </div>

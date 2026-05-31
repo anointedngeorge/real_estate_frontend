@@ -25,14 +25,36 @@ import {
   Plus,
   User2Icon,
   TextIcon,
+  FileBarChart2,
+  ArrowBigLeft,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { get_user_details, update_signed_user, useUser } from "@/lib/axios_functions";
+import {
+  update_user_info,
+  useUserListing,
+} from "@/lib/axios_functions";
 import { UUID } from "crypto";
-import { useForm } from "react-hook-form";
-import { UserProfile } from "@/interfaces/auth";
+import { Controller, useForm } from "react-hook-form";
+import {
+  UserProfile,
+  UserProfileUpdate,
+  UserProfileUpdate2,
+} from "@/interfaces/auth";
 import { ResponseInterface } from "@/interfaces/general";
+import { Link, useLocation } from "react-router-dom";
+import { ToastComponent } from "@/components/dashboard/ToastComponent";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import { roleLabels } from "@/data/constant";
+
+
 
 
 
@@ -40,45 +62,58 @@ export default function Profile() {
   const { user } = useDashboard();
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
-
-  const { data, isLoading, error } = useUser();
-  //   const [profileData, setProfile] = useState<userProfile>(data)
-
-  const profileData: UserProfile = data?.data;
-
+  const location = useLocation();
+  const userID = location.state?.userID;
   const [form, setForm] = useState<UserProfile>();
 
-  
-  const { register:ProfileRegister, handleSubmit: ProfileHandleSubmit, formState: { errors } } = useForm();
-  const { register:PasswordRegister, handleSubmit: PasswordHandleSubmit, formState: { errors:pass_error } } = useForm();
-  
 
+
+  const { data, isLoading, error } = useUserListing({ id: userID });
+
+  const {
+    register: ProfileRegister,
+    handleSubmit: ProfileHandleSubmit,
+    control,
+    formState: { errors },
+  } = useForm();
+  const {
+    register: PasswordRegister,
+    handleSubmit: PasswordHandleSubmit,
+    formState: { errors: pass_error },
+  } = useForm();
+
+  const profileData: UserProfile = data?.items[0]; // get the first element item.
   useEffect(() => {
     setForm(profileData);
   }, [profileData]);
 
   const handleSave = () => {
     setIsEditing(false);
-    toast({
+    ToastComponent({
       title: "Profile Updated",
-      description: "Your profile has been updated successfully.",
+      content: "Your profile has been updated successfully.",
     });
   };
 
-  const profileHandler = async (e:any) => {
-        // console.log("loading...", e)
-        const dt:ResponseInterface = await update_signed_user(e);
-        if (dt.status == true) {
-            globalThis.location.reload()
-        }
-  }
+  const profileHandler = async (e: UserProfileUpdate) => {
+    const userdata: UserProfileUpdate2 = {
+      user_id: userID,
+      data: e,
+    };
 
+    const dt: ResponseInterface = await update_user_info(userdata);
+
+    if (dt.status == true) {
+      console.log("loading...")
+       globalThis.location.reload();
+    }
+  };
 
   const passwordChangeHandler = async (e: React.FormEvent) => {
-        const password1 = e['password1'];
-        const password2 = e['password2'];
-        console.log("loading...", e, password1, password2)
-  }
+    const password1 = e["password1"];
+    const password2 = e["password2"];
+    // console.log("loading...", e, password1, password2)
+  };
 
   const roleLabel = (role: string) =>
     role.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
@@ -86,9 +121,10 @@ export default function Profile() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="My Profile"
+        title={`My Profile - ${profileData?.first_name} ${profileData?.last_name}`}
         description="View and manage your account information"
       >
+        <Link to={"/users"}> Back </Link>
         <Button
           variant={isEditing ? "default" : "outline"}
           onClick={isEditing ? handleSave : () => setIsEditing(true)}
@@ -166,7 +202,7 @@ export default function Profile() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <form onSubmit={ProfileHandleSubmit(profileHandler)} >
+            <form onSubmit={ProfileHandleSubmit(profileHandler)}>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="firstName">First Name</Label>
@@ -174,7 +210,7 @@ export default function Profile() {
                     id="firstName"
                     defaultValue={form?.first_name}
                     disabled={!isEditing}
-                    {...ProfileRegister("first_name", {required:true})}
+                    {...ProfileRegister("first_name", { required: true })}
                   />
                 </div>
                 <div className="space-y-2">
@@ -183,28 +219,56 @@ export default function Profile() {
                     id="lastName"
                     defaultValue={form?.last_name}
                     disabled={!isEditing}
-                    {...ProfileRegister("last_name", {required:true})}
+                    {...ProfileRegister("last_name", { required: true })}
                   />
                 </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-1">
-                {/* <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    defaultValue={form?.email}
-                    disabled={!isEditing}
-                    {...ProfileRegister("email", {required:true})}
+                <div className="space-y-2">
+                  <Label htmlFor="role">Role</Label>
+                  <br />
+
+                  <Controller
+                    name="role"
+                    control={control}
+                    rules={{ required: false }}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        disabled={!isEditing}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select role" />
+                        </SelectTrigger>
+
+                        <SelectContent>
+                          <SelectItem value="all">All Roles</SelectItem>
+
+                          {Object.entries(roleLabels).map(([value, label]) => (
+                            <SelectItem key={value} value={value}>
+                              {label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
                   />
-                </div> */}
+                  {/* <Input
+                    id="role"
+                    type="role"
+                    defaultValue={profileData?.role}
+                    disabled={!isEditing}
+                    {...ProfileRegister("role", {required:true})}
+                  /> */}
+                </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone</Label>
                   <Input
                     id="phone"
                     defaultValue={form?.phone_number}
                     disabled={!isEditing}
-                    {...ProfileRegister("phone_number", {required:true})}
+                    {...ProfileRegister("phone_number", { required: true })}
                   />
                 </div>
               </div>
@@ -228,7 +292,7 @@ export default function Profile() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <form onSubmit={PasswordHandleSubmit(passwordChangeHandler)} >
+            <form onSubmit={PasswordHandleSubmit(passwordChangeHandler)}>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="currentPassword">Current Password</Label>
@@ -238,7 +302,7 @@ export default function Profile() {
                     required={true}
                     disabled={!isEditing}
                     placeholder="••••••••"
-                    {...PasswordRegister("password1", {required:true})}
+                    {...PasswordRegister("password1", { required: true })}
                   />
                 </div>
                 <div className="space-y-2">
@@ -249,7 +313,7 @@ export default function Profile() {
                     required={true}
                     disabled={!isEditing}
                     placeholder="••••••••"
-                    {...PasswordRegister("password2", {required:true})}
+                    {...PasswordRegister("password2", { required: true })}
                   />
                 </div>
               </div>
@@ -261,7 +325,73 @@ export default function Profile() {
         </Card>
       </div>
 
-      {/*  */}
+      {/* Manage Permissions */}
+      <div className="grid gap-6 md:grid-cols-1">
+        {/* Details Form */}
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-lg">Manage Permission</CardTitle>
+            <CardDescription>
+              Update your user permission below
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <form onSubmit={PasswordHandleSubmit(passwordChangeHandler)}>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="currentPassword">Current Password</Label>
+                  <Input
+                    id="currentPassword"
+                    type="password"
+                    required={true}
+                    disabled={!isEditing}
+                    placeholder="••••••••"
+                    {...PasswordRegister("password1", { required: true })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword">New Password</Label>
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    required={true}
+                    disabled={!isEditing}
+                    placeholder="••••••••"
+                    {...PasswordRegister("password2", { required: true })}
+                  />
+                </div>
+              </div>
+              <div className="mt-3">
+                <Button>Update Password</Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+
+
+      <div className="grid gap-6 md:grid-cols-1">
+        {/* Details Form */}
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-lg">Security Caution</CardTitle>
+            <CardDescription>
+              Take Caution
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-3">
+                  <div>
+                      <Button onClick={() => alert("Implement a suspend function")} className="bg-red-500">Suspend Account</Button>
+                  </div>
+                  <div> </div>
+                  <div></div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+
     </div>
   );
 }

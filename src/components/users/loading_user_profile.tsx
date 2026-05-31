@@ -51,7 +51,11 @@ const roleLabels: Record<UserRole, string> = {
   marketing_admin: "Marketing Admin",
 };
 
-export const UserRegistration = () => {
+
+
+
+
+export const UserProfilePreview = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const formSubmitHandler = async (data) => {
@@ -70,9 +74,8 @@ export const UserRegistration = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Add User
+        <Button className="bg-none">
+          Profile
         </Button>
       </DialogTrigger>
 

@@ -1,23 +1,31 @@
 // User Roles - RBAC
-export type UserRole = 'super_admin' | 'manager' | 'finance_admin' | 'sales_admin' | 'marketing_admin';
+export type UserRole =
+  | "super_admin"
+  | "manager"
+  | "finance_admin"
+  | "sales_admin"
+  | "admin"
+  | 'buyer'
+  | 'agent'
+  | "marketing_admin";
 
-export type UserType = 'admin' | 'realtor' | 'client';
+export type UserType = "admin" | "realtor" | "client";
 
-export type PaymentStatus = 'paid' | 'due' | 'overdue';
+export type PaymentStatus = "paid" | "due" | "overdue";
 
-export type PropertyStatus = 'available' | 'sold' | 'reserved' | 'archived';
+export type PropertyStatus = "available" | "sold" | "reserved" | "archived";
 
-export type PaymentPlan = 'outright' | '3_months' | '6_months' | '10_months';
+export type PaymentPlan = "outright" | "3_months" | "6_months" | "10_months";
 
 // Commission Rules
 export const COMMISSION_RULES = {
-  DIRECT: 0.10, // 10%
+  DIRECT: 0.1, // 10%
   DOWNLINER: 0.02, // 2%
   COMPANY: 0.78, // 78%
 } as const;
 
 // Installment Interest
-export const INSTALLMENT_INTEREST_RATE = 0.10; // 10% every 3 months
+export const INSTALLMENT_INTEREST_RATE = 0.1; // 10% every 3 months
 
 // User Entity
 export interface User {
@@ -29,9 +37,25 @@ export interface User {
   userType: UserType;
   avatar?: string;
   phone?: string;
-  status: 'active' | 'suspended' | 'inactive';
+  status: "active" | "suspended" | "inactive";
   createdAt: string;
   lastLoginAt?: string;
+}
+
+// server user entity
+
+export interface UserServer {
+  avatar?: string,
+  date_joined: string;
+  email: string;
+  first_name: string;
+  id: string;
+  last_name: string;
+  phone_number: string;
+  role: string;
+  username: string;
+  last_login?: string
+  status: "active" | "suspended" | "inactive";
 }
 
 // Realtor Entity
@@ -50,7 +74,7 @@ export interface Realtor {
   paidCommission: number;
   unpaidCommission: number;
   referralCode: string;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
   joinedAt: string;
 }
 
@@ -66,7 +90,7 @@ export interface Client {
   properties: string[];
   totalSpent: number;
   outstandingBalance: number;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
   createdAt: string;
 }
 
@@ -77,7 +101,7 @@ export interface Property {
   location: string;
   address: string;
   price: number;
-  type: 'land' | 'house' | 'apartment' | 'commercial';
+  type: "land" | "house" | "apartment" | "commercial";
   size: string;
   status: PropertyStatus;
   images: string[];
@@ -97,7 +121,7 @@ export interface Sale {
   realtorId: string;
   amount: number;
   paymentPlan: PaymentPlan;
-  status: 'completed' | 'in_progress' | 'cancelled';
+  status: "completed" | "in_progress" | "cancelled";
   commission: {
     direct: number;
     downliner: number;
@@ -130,9 +154,9 @@ export interface Commission {
   id: string;
   realtorId: string;
   saleId: string;
-  type: 'direct' | 'downliner';
+  type: "direct" | "downliner";
   amount: number;
-  status: 'pending' | 'approved' | 'paid';
+  status: "pending" | "approved" | "paid";
   scheduledPayoutDate: string;
   paidDate?: string;
   createdAt: string;
@@ -174,7 +198,7 @@ export interface PaymentCompliance {
 // Permission Type
 export interface Permission {
   module: string;
-  actions: ('view' | 'create' | 'edit' | 'delete' | 'approve')[];
+  actions: ("view" | "create" | "edit" | "delete" | "approve")[];
 }
 
 export interface RolePermissions {

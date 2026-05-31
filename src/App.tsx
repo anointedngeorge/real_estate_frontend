@@ -20,6 +20,7 @@ import NotFound from "./pages/NotFound";
 
 import "./lib/interceptors";
 import Profile from "./pages/Profile";
+import UserProfilePage from "./pages/User_profile";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,9 @@ const App = () => (
             <Route path="/marketing" element={<Marketing />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/profile" element={<Profile />} />
+
+            {/* users */}
+            <Route path="/users/profile" element={<UserProfilePage />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />

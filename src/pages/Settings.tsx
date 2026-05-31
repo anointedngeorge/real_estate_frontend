@@ -1,34 +1,11 @@
 import { useState } from "react";
 import {
-  Save,
-  Bell,
-  Shield,
-  Users,
-  Zap,
-  Globe,
-  Database,
-  RefreshCw,
+  Save
 } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { Separator } from "@/components/ui/separator";
 import { COMMISSION_RULES, INSTALLMENT_INTEREST_RATE } from "@/types";
 import { Controller, useForm } from "react-hook-form";
