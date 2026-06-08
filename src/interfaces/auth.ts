@@ -8,6 +8,13 @@ export interface UserProfile {
   role: string;
   date_joined: string;
   login_histories: [];
+  is_active: boolean;
+  account_name?: string,
+  bank_name?: string,
+  bank_type?: string,
+  bank_number?:string,
+  referral_code?:string,
+  permissions: Record<string, { id: string, name: string }[]>;
 }
 
 export interface UserProfileUpdate {
@@ -23,6 +30,10 @@ export interface UserProfileUpdate2 {
     first_name: string;
     last_name: string;
     phone_number: string;
+    account_name?: string,
+    bank_name?: string,
+    bank_type?: string,
+    bank_number?:string
   };
 }
 

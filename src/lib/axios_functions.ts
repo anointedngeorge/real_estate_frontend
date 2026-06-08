@@ -1,15 +1,16 @@
 import axios from "axios";
 import api from "./http";
 import { useQuery } from "@tanstack/react-query";
-import { CreateUserInterface, UserProfileUpdate, UserProfileUpdate2 } from "@/interfaces/auth";
+import {
+  CreateUserInterface,
+  UserProfileUpdate,
+  UserProfileUpdate2,
+} from "@/interfaces/auth";
 import {
   SystemSettingsInterface,
   UsersListingQueryInterface,
 } from "@/interfaces/general";
 import { REAL_ESTATE_SETTINGS } from "./constants";
-
-
-
 
 export const useUser = () =>
   useQuery({
@@ -18,7 +19,6 @@ export const useUser = () =>
     retry: true,
   });
 
-
 export const useSettings = () =>
   useQuery({
     queryKey: ["settings"],
@@ -26,19 +26,19 @@ export const useSettings = () =>
     retry: false,
   });
 
-
-
-export const useUserListing = (
-  query: Partial<UsersListingQueryInterface>
-) =>
+export const useUserListing = (query: Partial<UsersListingQueryInterface>) =>
   useQuery({
     queryKey: ["userListings", query],
     queryFn: () => user_listings(query),
     retry: false,
   });
 
-
-
+export const useUserRolePermissions = (user_id: string) =>
+  useQuery({
+    queryKey: ["userRolePermissions", user_id],
+    queryFn: () => get_user_role_permission(user_id),
+    retry: false,
+  });
 
 export const loginServer = async (username: string, password: string) => {
   try {
@@ -56,6 +56,32 @@ export const loginServer = async (username: string, password: string) => {
 export const get_user_details = async () => {
   try {
     const response = await api.get("/auth/me");
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.detail ?? "Failed to fetch user");
+    }
+    throw error;
+  }
+};
+
+export const get_user_role_permission = async (user_id: string) => {
+  try {
+    const response = await api.get(
+      `/users/userRolePermissions?user_id=${user_id}`,
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.detail ?? "Failed to fetch user");
+    }
+    throw error;
+  }
+};
+
+export const update_user_suspended = async (user_id: string) => {
+  try {
+    const response = await api.put(`/auth/suspendUser/${user_id}`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -83,14 +109,15 @@ export const update_signed_user = async (
   }
 };
 
-
-export const update_user_info = async (
-  payload: Partial<UserProfileUpdate2>,
+export const update_object_info = async <T>(
+  payload: Partial<T>,
+  url?: string
 ) => {
+
   try {
-    const response = await api.put("/users/update", payload);
+    const url_path = url ? url : "/users/update";
+    const response = await api.put(url_path, payload);
     return response.data;
-    
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(
@@ -102,7 +129,6 @@ export const update_user_info = async (
     throw error;
   }
 };
-
 
 export const system_settings = async (payload) => {
   try {
@@ -174,12 +200,11 @@ export const create_user = async (payload: Partial<CreateUserInterface>) => {
   }
 };
 
-
 // delete user
 
 export const deleteUser = async (id: string) => {
   try {
-    const response = await api.delete(`/users/delete?user_id=${id}` );
+    const response = await api.delete(`/users/delete?user_id=${id}`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -196,6 +221,8 @@ export const deleteUser = async (id: string) => {
 export const user_listings = async (
   query: Partial<UsersListingQueryInterface>,
 ) => {
+  const url = query.url ? query.url : "/users/list?";
+
   try {
     const params = new URLSearchParams();
 
@@ -215,8 +242,7 @@ export const user_listings = async (
       params.append("exclude_users_roles", query.exclude_users_roles);
     }
 
-    const response = await api.get(`/users/list?${params.toString()}`);
-
+    const response = await api.get(`${url}${params.toString()}`);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -227,6 +253,25 @@ export const user_listings = async (
       );
     }
 
+    throw error;
+  }
+};
+
+// remove user permission
+export const remove_user_permission = async (user_id: string, perm: string) => {
+  try {
+    const response = await api.delete(
+      `/users/removePermission?user_id=${user_id}&perm=${perm}`,
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message ??
+          error.response?.data?.detail ??
+          "Failed to remove permission",
+      );
+    }
     throw error;
   }
 };

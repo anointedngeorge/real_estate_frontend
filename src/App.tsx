@@ -21,6 +21,9 @@ import NotFound from "./pages/NotFound";
 import "./lib/interceptors";
 import Profile from "./pages/Profile";
 import UserProfilePage from "./pages/User_profile";
+import RealtorProfile from "./pages/realtor_profile";
+import ClientProfile from "./pages/cllient_profile";
+import PropertyDetails from "./pages/property_details";
 
 const queryClient = new QueryClient();
 
@@ -38,19 +41,34 @@ const App = () => (
           {/* how do i pass general data like a provider to this route */}
           <Route element={<DashboardLayout />}>
             <Route path="/dashboard" element={<Overview />} loader={true} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/realtors" element={<Realtors />} />
-            <Route path="/clients" element={<Clients />} />
-            <Route path="/properties" element={<Properties />} />
+            <Route path="/users" >
+                  <Route path="list" element={<Users />} /> 
+                  <Route path="profile" element={<UserProfilePage />}  />
+            </Route>
+            
+            <Route path="/clients" >
+              <Route path="list" element={<Clients />} />
+              <Route path="profile" element={<ClientProfile />} />
+            </Route>
+            
+            <Route path="/properties" >
+              <Route path="list" element={<Properties />} />
+              <Route path="details" element={<PropertyDetails />} />
+
+            </Route>
             <Route path="/sales" element={<Sales />} />
             <Route path="/payments" element={<Payments />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/marketing" element={<Marketing />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/profile" element={<Profile />} />
+            
+            <Route path="/realtors" >
+                <Route path="list" element={<Realtors />} />
+                <Route path="profile" element={<RealtorProfile />} />
+            </Route>
 
-            {/* users */}
-            <Route path="/users/profile" element={<UserProfilePage />} />
+  
           </Route>
 
           <Route path="*" element={<NotFound />} />

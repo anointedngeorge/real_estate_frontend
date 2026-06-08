@@ -22,32 +22,40 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { mockRealtors, formatCurrency, formatDate, formatNumber } from '@/data/mockData';
 import { COMMISSION_RULES } from '@/types';
+import { useUserListing } from '@/lib/axios_functions';
+import { UsersRealtorListingInterface } from '@/interfaces/general';
+import { useNavigate } from 'react-router-dom';
+
+
+
 
 export default function RealtorsPage() {
+
+
+
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const navigate = useNavigate();
 
-  const filteredRealtors = mockRealtors.filter((realtor) => {
+  const { data, isLoading, error } = useUserListing({ page: 1, url:'/realtors/list?'});
+  const [users, setUsers] = useState<UsersRealtorListingInterface[]>(data?.items);
+   
+
+
+
+  const filteredRealtors = data?.items?.filter((realtor: UsersRealtorListingInterface) => {
     const matchesSearch =
-      realtor.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      realtor.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      realtor.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      realtor.referralCode.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || realtor.status === statusFilter;
+      realtor?.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      realtor?.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      realtor?.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      realtor?.referral_code.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || realtor?.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
-  const totalRealtors = mockRealtors.length;
-  const activeRealtors = mockRealtors.filter(r => r.status === 'active').length;
-  const totalCommission = mockRealtors.reduce((acc, r) => acc + r.totalCommissionEarned, 0);
-  const totalSales = mockRealtors.reduce((acc, r) => acc + r.totalSales, 0);
+  
 
-  const getUplineName = (uplineId?: string) => {
-    if (!uplineId) return 'None (Top Level)';
-    const upline = mockRealtors.find(r => r.id === uplineId);
-    return upline ? `${upline.firstName} ${upline.lastName}` : 'Unknown';
-  };
-
+    
   return (
     <div className="space-y-6 animate-fade-in">
       <PageHeader
@@ -64,20 +72,20 @@ export default function RealtorsPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KPICard
           title="Total Realtors"
-          value={formatNumber(totalRealtors)}
-          subtitle={`${activeRealtors} active`}
+          value={formatNumber(data?.count)}
+          subtitle={`${data?.count} active`}
           icon={Users}
         />
         <KPICard
           title="Total Sales"
-          value={formatNumber(totalSales)}
+          value={formatNumber(230000)}
           subtitle="Properties sold"
           icon={TrendingUp}
           variant="success"
         />
         <KPICard
           title="Total Commission"
-          value={formatCurrency(totalCommission)}
+          value={formatCurrency(1290567)}
           subtitle="All time earnings"
           icon={Wallet}
           variant="accent"
@@ -121,8 +129,7 @@ export default function RealtorsPage() {
               <tr>
                 <th>Realtor</th>
                 <th>Referral Code</th>
-                <th>Upline</th>
-                <th>Downlines</th>
+                <th>Role</th>
                 <th>Total Sales</th>
                 <th>Commission Earned</th>
                 <th>Paid / Unpaid</th>
@@ -131,62 +138,53 @@ export default function RealtorsPage() {
               </tr>
             </thead>
             <tbody>
-              {filteredRealtors.map((realtor) => (
-                <tr key={realtor.id}>
+              {filteredRealtors?.map((realtor: UsersRealtorListingInterface) => (
+                <tr key={realtor?.id}>
                   <td>
                     <div className="flex items-center gap-3">
-                      {realtor.avatar ? (
+                      {realtor?.avatar ? (
                         <img
-                          src={realtor.avatar}
-                          alt={`${realtor.firstName} ${realtor.lastName}`}
+                          src={realtor?.avatar}
+                          alt={`${realtor?.first_name} ${realtor?.last_name}`}
                           className="h-10 w-10 rounded-full object-cover"
                         />
                       ) : (
                         <div className="h-10 w-10 rounded-full bg-accent/10 flex items-center justify-center">
                           <span className="text-sm font-medium text-accent">
-                            {realtor.firstName[0]}{realtor.lastName[0]}
+                            {realtor?.first_name[0]}{realtor?.last_name[0]}
                           </span>
                         </div>
                       )}
                       <div>
-                        <p className="font-medium">{realtor.firstName} {realtor.lastName}</p>
-                        <p className="text-xs text-muted-foreground">{realtor.email}</p>
+                        <p className="font-medium">{realtor?.first_name} {realtor?.last_name}</p>
+                        <p className="text-xs text-muted-foreground">{realtor?.email}</p>
                       </div>
                     </div>
                   </td>
                   <td>
                     <code className="rounded bg-muted px-2 py-0.5 text-xs font-mono">
-                      {realtor.referralCode}
+                      {realtor?.referral_code}
                     </code>
                   </td>
                   <td className="text-sm text-muted-foreground">
-                    {getUplineName(realtor.uplineId)}
+                    {realtor?.role?.toUpperCase()}
                   </td>
-                  <td>
-                    <div className="flex items-center gap-1">
-                      <span className="font-medium">{realtor.downlineIds.length}</span>
-                      {realtor.downlineIds.length > 0 && (
-                        <Button variant="ghost" size="icon" className="h-6 w-6">
-                          <ChevronRight className="h-3 w-3" />
-                        </Button>
-                      )}
-                    </div>
-                  </td>
-                  <td className="font-medium">{realtor.totalSales}</td>
+                
+                  <td className="font-medium">{789}</td>
                   <td className="text-success font-medium">
-                    {formatCurrency(realtor.totalCommissionEarned)}
+                    {formatCurrency(1300000)}
                   </td>
                   <td>
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 text-xs">
-                        <span className="text-success">✓ {formatCurrency(realtor.paidCommission)}</span>
+                        <span className="text-success">✓ {formatCurrency(200000)}</span>
                       </div>
                       <div className="flex items-center gap-2 text-xs">
-                        <span className="text-warning">○ {formatCurrency(realtor.unpaidCommission)}</span>
+                        <span className="text-warning">○ {formatCurrency(1100000)}</span>
                       </div>
                     </div>
                   </td>
-                  <td><StatusBadge status={realtor.status} /></td>
+                  <td><StatusBadge status={realtor?.is_active? "active": 'inactive'} /></td>
                   <td className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -197,7 +195,11 @@ export default function RealtorsPage() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>View Profile</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate("/realtors/profile", {
+                            state: {
+                                userID: realtor?.id
+                            }
+                        })}>View Profile </DropdownMenuItem>
                         <DropdownMenuItem>View Hierarchy</DropdownMenuItem>
                         <DropdownMenuItem>View Sales</DropdownMenuItem>
                         <DropdownMenuItem>Commission History</DropdownMenuItem>
@@ -212,6 +214,7 @@ export default function RealtorsPage() {
           </table>
         </div>
       </div>
+      
     </div>
   );
 }

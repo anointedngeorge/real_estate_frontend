@@ -38,7 +38,6 @@ import {
   useUserListing,
   useUserRolePermissions,
 } from "@/lib/axios_functions";
-import { UUID } from "crypto";
 import { Controller, useForm } from "react-hook-form";
 import {
   UserProfile,
@@ -75,16 +74,22 @@ interface CheckPermissionInterface {
   name: string;
 }
 
-export default function Profile() {
+export default function RealtorProfile() {
   const { user } = useDashboard();
   const [isEditing, setIsEditing] = useState(false);
   const location = useLocation();
-  const userID = location.state?.userID;
+
+  const userID = location.state.userID;
   const [form, setForm] = useState<UserProfile>();
   const [profileData, setProfileData] = useState<UserProfile>();
 
   // fetch user details using the userID from location state
-  const { data, isLoading, error } = useUserListing({ id: userID });
+  const { data, isLoading, error } = useUserListing({
+    id: userID,
+    url: "/realtors/list?",
+  });
+
+
 
   useEffect(() => {
     if (data) {
@@ -118,14 +123,16 @@ export default function Profile() {
     });
   };
 
+
   // TODO: implement update  function
   const profileHandler = async (e: UserProfileUpdate) => {
+    console.log(e)
     const userdata: UserProfileUpdate2 = {
       user_id: userID,
       data: e,
     };
 
-    const dt: ResponseInterface = await update_object_info<UserProfileUpdate2>(userdata);
+    const dt: ResponseInterface = await update_object_info<UserProfileUpdate2>(userdata, 'realtors/update');
 
     if (dt.status == true) {
       globalThis.location.reload();
@@ -142,7 +149,7 @@ export default function Profile() {
     role.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
   function handlePermission(perm_id: string, perm_name: string): void {
-    console.log("Permission toggled:", perm_id, perm_name);
+    console.log("Permission toggled:", "perm_id, perm_name");
   }
 
   // suspend user function
@@ -163,13 +170,16 @@ export default function Profile() {
     }
   }
 
+
+  // console.log(profileData)
+
   return (
     <div className="space-y-6">
       <PageHeader
         title={`My Profile - ${profileData?.first_name} ${profileData?.last_name}`}
         description="View and manage your account information"
       >
-        <Link to={"/users/list"}> Back </Link>
+        <Link to={"/realtors/list"}> Back </Link>
         <Button
           variant={isEditing ? "default" : "outline"}
           onClick={isEditing ? handleSave : () => setIsEditing(true)}
@@ -229,6 +239,29 @@ export default function Profile() {
                 <span>{profileData?.username || ""}</span>
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
+                <TextIcon className="h-4 w-4" />
+                <span>{profileData?.referral_code || ""}</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <TextIcon className="h-4 w-4" />
+                <span className="text-black font-bold">{profileData?.account_name || ""}</span>
+              </div>
+
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <TextIcon className="h-4 w-4" />
+                <span className="text-black font-bold">{profileData?.bank_name || ""}</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <TextIcon className="h-4 w-4" />
+                <span className="text-black font-bold">{profileData?.bank_number || ""}</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <TextIcon className="h-4 w-4" />
+                <span className="text-black font-bold">{profileData?.bank_type || ""}</span>
+              </div>
+
+
+              <div className="flex items-center gap-2 text-muted-foreground">
                 <Calendar className="h-4 w-4" />
                 <span>
                   Joined{" "}
@@ -272,7 +305,7 @@ export default function Profile() {
                   />
                 </div>
               </div>
-              <div className="grid gap-4 sm:grid-cols-1">
+              {/* <div className="grid gap-4 sm:grid-cols-1">
                 <div className="space-y-2">
                   <Label htmlFor="role">Role</Label>
                   <br />
@@ -303,13 +336,6 @@ export default function Profile() {
                       </Select>
                     )}
                   />
-                  {/* <Input
-                    id="role"
-                    type="role"
-                    defaultValue={profileData?.role}
-                    disabled={!isEditing}
-                    {...ProfileRegister("role", {required:true})}
-                  /> */}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone</Label>
@@ -318,6 +344,61 @@ export default function Profile() {
                     defaultValue={form?.phone_number}
                     disabled={!isEditing}
                     {...ProfileRegister("phone_number", { required: true })}
+                  />
+                </div>
+              </div> */}
+
+              {/* financial information */}
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="space-y-2">
+                  <Label htmlFor="account_name">Account Name</Label>
+                  <Input
+                    id="account_name"
+                    defaultValue={form?.account_name}
+                    disabled={!isEditing}
+                    {...ProfileRegister("account_name", { required: false })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="bank_name">Bank Name</Label>
+                  <Input
+                    id="bank_name"
+                    defaultValue={form?.bank_name}
+                    disabled={!isEditing}
+                    {...ProfileRegister("bank_name", { required: false })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Bank Number</Label>
+                  <Input
+                    id="lastName"
+                    defaultValue={form?.bank_number}
+                    disabled={!isEditing}
+                    {...ProfileRegister("bank_number", { required: false })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Bank Type</Label>
+                  <Controller
+                    name="bank_type"
+                    control={control}
+                    rules={{ required: false }}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        disabled={!isEditing}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={null}>Account Types</SelectItem>
+                          <SelectItem value={"savings"}>Savings</SelectItem>
+                          <SelectItem value={"current"}>Current</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
                   />
                 </div>
               </div>
@@ -519,7 +600,9 @@ export default function Profile() {
                   onClick={() => suspendUser(profileData?.id)}
                   className={`w-full text-white ${profileData?.is_active ? "hover:bg-red-600 bg-red-500" : "bg-green-500 hover:bg-green-600"}  `}
                 >
-                  {profileData?.is_active ? "Suspend Account" : "Activate Account"}
+                  {profileData?.is_active
+                    ? "Suspend Account"
+                    : "Activate Account"}
                 </Button>
               </div>
               <div></div>

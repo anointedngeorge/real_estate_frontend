@@ -35,14 +35,6 @@ const propertyTypeIcons = {
   commercial: Building,
 };
 
-
-interface Stats  {
-   total: number,
-   sold: number,
-   available: number,
-   price_summation: number
-}
-
 export default function PropertiesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -52,16 +44,9 @@ export default function PropertiesPage() {
   const navigate = useNavigate();
 
   const { data, isLoading, error } = useUserListing({ page: 1, url:'/properties/list?'});
-  const stats:Stats = data?.stats;
 
-  const checkStatus = (property, fallback) => {
-      if (property) {
-          return property.status.charAt(0).toUpperCase() + property.status.slice(1)
-      }
-      return fallback
-  }
+  console.log(data, "loading...")
   
-
   const filteredProperties = data?.items?.filter((property: PropertyListInterface) => {
     const matchesSearch =
       property.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -92,28 +77,27 @@ export default function PropertiesPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KPICard
           title="Total Properties"
-          value={formatNumber(stats?.total)}
+          value={formatNumber(totalProperties)}
           subtitle="All listings"
           icon={Building2}
         />
         <KPICard
           title="Available"
-          value={formatNumber(stats?.available)}
+          value={formatNumber(availableProperties)}
           subtitle="Ready for sale"
           icon={Home}
           variant="success"
         />
         <KPICard
           title="Sold"
-          value={formatNumber(stats?.sold)}
+          value={formatNumber(soldProperties)}
           subtitle="Completed sales"
           icon={Tag}
           variant="accent"
         />
         <KPICard
-         className='text-sm'
           title="Portfolio Value"
-          value={formatCurrency(stats?.price_summation)}
+          value={formatCurrency(totalValue)}
           subtitle="Total inventory"
           icon={Landmark}
         />
@@ -175,6 +159,7 @@ export default function PropertiesPage() {
       </div>
 
       {/* Properties Grid */}
+      {viewMode === 'grid' ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredProperties?.map((property: PropertyListInterface) => {
             const TypeIcon = propertyTypeIcons[property.property_types];
@@ -187,12 +172,11 @@ export default function PropertiesPage() {
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   <div className="absolute top-3 right-3">
-                    {`${property.status}`.charAt(0).toUpperCase() + `${property.status}`.substring(1)}
-                    <StatusBadge status={checkStatus(property, 'reserved')} />
+                    <StatusBadge status={'archived'} />
                   </div>
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
                     <p className="text-xl font-bold text-white">
-                      {formatCurrency(property.selling_price ? property.selling_price : property.actual_price)}
+                      {formatCurrency(property.selling_price)}
                     </p>
                   </div>
                 </div>
@@ -212,28 +196,22 @@ export default function PropertiesPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                            onClick={() =>
-                              navigate("/properties/details", {
-                                state: {
-                                  propID: property?.id,
-                                },
-                              })
-                            }
-                          >
-                            View Details{" "}
-                          </DropdownMenuItem>
+                        <DropdownMenuItem>View Details</DropdownMenuItem>
+                        <DropdownMenuItem>Edit Property</DropdownMenuItem>
+                        <DropdownMenuItem>Assign to Client</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="text-destructive">Archive</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
                   <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <TypeIcon className="h-4 w-4" />
-                      <span className="capitalize">{property?.property_types}</span>
+                      <span className="capitalize">{property.property_types}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Ruler className="h-4 w-4" />
-                      <span>{property?.features?.size || '300qm'}</span>
+                      <span>{property.features?.size || '300qm'}</span>
                     </div>
                   </div>
                 </CardContent>
@@ -241,7 +219,64 @@ export default function PropertiesPage() {
             );
           })}
         </div>
-     
+      ) : (
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="data-table">
+              <thead className="bg-muted/50">
+                <tr>
+                  <th>Property</th>
+                  <th>Location</th>
+                  <th>Type</th>
+                  <th>Size</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th className="text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredProperties.map((property) => (
+                  <tr key={property.id}>
+                    <td>
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={property.images[0]}
+                          alt={property.title}
+                          className="h-12 w-16 rounded-lg object-cover"
+                        />
+                        <span className="font-medium">{property.title}</span>
+                      </div>
+                    </td>
+                    <td className="text-muted-foreground">{property.location}</td>
+                    <td className="capitalize">{property.type}</td>
+                    <td>{property.size}</td>
+                    <td className="font-medium">{formatCurrency(property.price)}</td>
+                    <td><StatusBadge status={property.status} /></td>
+                    <td className="text-muted-foreground">{formatDate(property.createdAt)}</td>
+                    <td className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>View Details</DropdownMenuItem>
+                          <DropdownMenuItem>Edit Property</DropdownMenuItem>
+                          <DropdownMenuItem>Assign to Client</DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-destructive">Archive</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

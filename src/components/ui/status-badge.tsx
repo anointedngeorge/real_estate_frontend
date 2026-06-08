@@ -13,26 +13,27 @@ const statusConfig: Record<StatusType, { label: string; variant: string }> = {
   paid: { label: 'Paid', variant: 'status-badge--success' },
   due: { label: 'Due', variant: 'status-badge--warning' },
   overdue: { label: 'Overdue', variant: 'status-badge--error' },
-  
+
   // Property Status
   available: { label: 'Available', variant: 'status-badge--success' },
   sold: { label: 'Sold', variant: 'status-badge--info' },
   reserved: { label: 'Reserved', variant: 'status-badge--warning' },
   archived: { label: 'Archived', variant: 'status-badge--neutral' },
-  
+
   // User Status
   active: { label: 'Active', variant: 'status-badge--success' },
   inactive: { label: 'Inactive', variant: 'status-badge--neutral' },
   suspended: { label: 'Suspended', variant: 'status-badge--error' },
-  
+
   // Commission Status
   pending: { label: 'Pending', variant: 'status-badge--warning' },
   approved: { label: 'Approved', variant: 'status-badge--info' },
-  
+
   // Sale Status
   completed: { label: 'Completed', variant: 'status-badge--success' },
   in_progress: { label: 'In Progress', variant: 'status-badge--info' },
   cancelled: { label: 'Cancelled', variant: 'status-badge--error' },
+
 };
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
@@ -44,4 +45,5 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
       {config.label}
     </span>
   );
+  
 }

@@ -75,7 +75,7 @@ interface CheckPermissionInterface {
   name: string;
 }
 
-export default function Profile() {
+export default function ClientProfile() {
   const { user } = useDashboard();
   const [isEditing, setIsEditing] = useState(false);
   const location = useLocation();
@@ -273,46 +273,10 @@ export default function Profile() {
                 </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-1">
-                <div className="space-y-2">
-                  <Label htmlFor="role">Role</Label>
-                  <br />
-
-                  <Controller
-                    name="role"
-                    control={control}
-                    rules={{ required: false }}
-                    render={({ field }) => (
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        disabled={!isEditing}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select role" />
-                        </SelectTrigger>
-
-                        <SelectContent>
-                          <SelectItem value="all">All Roles</SelectItem>
-
-                          {Object.entries(roleLabels).map(([value, label]) => (
-                            <SelectItem key={value} value={value}>
-                              {label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                  {/* <Input
-                    id="role"
-                    type="role"
-                    defaultValue={profileData?.role}
-                    disabled={!isEditing}
-                    {...ProfileRegister("role", {required:true})}
-                  /> */}
-                </div>
+              
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone</Label>
+                  
                   <Input
                     id="phone"
                     defaultValue={form?.phone_number}

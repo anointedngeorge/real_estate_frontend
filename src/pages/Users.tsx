@@ -56,7 +56,7 @@ export default function UsersPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const navigate = useNavigate();
 
-  const { data, isLoading, error } = useUserListing({ page: 1 });
+  const { data, isLoading, error } = useUserListing({ page: 1, exclude_users_roles:'agent' });
   const [users, setUsers] = useState<UserServer[]>(data?.items);
 
   const filteredUsers = data?.items.filter((user: UserServer) => {

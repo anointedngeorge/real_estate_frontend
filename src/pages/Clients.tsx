@@ -1,17 +1,24 @@
-import { useState } from 'react';
-import { Plus, Search, MoreHorizontal, Building2, CreditCard, FileText } from 'lucide-react';
-import { PageHeader } from '@/components/layout/PageHeader';
-import { StatusBadge } from '@/components/ui/status-badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { KPICard } from '@/components/dashboard/KPICard';
+import { useState } from "react";
+import {
+  Plus,
+  Search,
+  MoreHorizontal,
+  Building2,
+  CreditCard,
+  FileText,
+} from "lucide-react";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { KPICard } from "@/components/dashboard/KPICard";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,30 +26,49 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { mockClients, mockProperties, formatCurrency, formatDate, formatNumber } from '@/data/mockData';
+} from "@/components/ui/dropdown-menu";
+import {
+  mockClients,
+  mockProperties,
+  formatCurrency,
+  formatDate,
+  formatNumber,
+} from "@/data/mockData";
+import { useUserListing } from "@/lib/axios_functions";
+import {
+  ClientListingInterface,
+  UsersListingInterface,
+} from "@/interfaces/general";
+import { useNavigate } from "react-router-dom";
 
 export default function ClientsPage() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const navigate = useNavigate();
 
-  const filteredClients = mockClients.filter((client) => {
-    const matchesSearch =
-      client.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      client.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      client.email.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || client.status === statusFilter;
-    return matchesSearch && matchesStatus;
+  const { data, isLoading, error } = useUserListing({
+    page: 1,
+    url: "/client/list?",
   });
 
-  const totalClients = mockClients.length;
-  const activeClients = mockClients.filter(c => c.status === 'active').length;
-  const totalSpent = mockClients.reduce((acc, c) => acc + c.totalSpent, 0);
-  const totalOutstanding = mockClients.reduce((acc, c) => acc + c.outstandingBalance, 0);
+  const filteredClients = data?.items?.filter(
+    (client: ClientListingInterface) => {
+      const matchesSearch =
+        client.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        client.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        client.email.toLowerCase().includes(searchQuery.toLowerCase());
+      // const matchesStatus = statusFilter === 'all' || client. === statusFilter;
+      return matchesSearch;
+    },
+  );
 
-  const getClientProperties = (propertyIds: string[]) => {
-    return propertyIds.map(id => mockProperties.find(p => p.id === id)).filter(Boolean);
-  };
+  const totalClients = mockClients.length;
+  const activeClients = mockClients.filter((c) => c.status === "active").length;
+  const totalSpent = mockClients.reduce((acc, c) => acc + c.totalSpent, 0);
+  const totalOutstanding = mockClients.reduce(
+    (acc, c) => acc + c.outstandingBalance,
+    0,
+  );
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -80,7 +106,7 @@ export default function ClientsPage() {
         />
         <KPICard
           title="Properties Owned"
-          value={formatNumber(mockClients.reduce((acc, c) => acc + c.properties.length, 0))}
+          value={23}
           subtitle="Total properties"
           icon={Building2}
         />
@@ -117,7 +143,7 @@ export default function ClientsPage() {
               <tr>
                 <th>Client</th>
                 <th>Contact</th>
-                <th>Properties</th>
+                {/* <th>Properties</th> */}
                 <th>Total Spent</th>
                 <th>Outstanding</th>
                 <th>Status</th>
@@ -126,8 +152,7 @@ export default function ClientsPage() {
               </tr>
             </thead>
             <tbody>
-              {filteredClients.map((client) => {
-                const properties = getClientProperties(client.properties);
+              {filteredClients?.map((client: ClientListingInterface) => {
                 return (
                   <tr key={client.id}>
                     <td>
@@ -135,24 +160,31 @@ export default function ClientsPage() {
                         {client.avatar ? (
                           <img
                             src={client.avatar}
-                            alt={`${client.firstName} ${client.lastName}`}
+                            alt={`${client.first_name} ${client.last_name}`}
                             className="h-10 w-10 rounded-full object-cover"
                           />
                         ) : (
                           <div className="h-10 w-10 rounded-full bg-info/10 flex items-center justify-center">
                             <span className="text-sm font-medium text-info">
-                              {client.firstName[0]}{client.lastName[0]}
+                              {client.first_name[0]}
+                              {client.first_name[0]}
                             </span>
                           </div>
                         )}
                         <div>
-                          <p className="font-medium">{client.firstName} {client.lastName}</p>
-                          <p className="text-xs text-muted-foreground">{client.email}</p>
+                          <p className="font-medium">
+                            {client.first_name} {client.first_name}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {client.email}
+                          </p>
                         </div>
                       </div>
                     </td>
-                    <td className="text-sm text-muted-foreground">{client.phone}</td>
-                    <td>
+                    <td className="text-sm text-muted-foreground">
+                      {client.phone_number}
+                    </td>
+                    {/* <td>
                       <div className="space-y-1">
                         {properties.slice(0, 2).map((prop) => (
                           <div key={prop?.id} className="text-xs">
@@ -165,16 +197,26 @@ export default function ClientsPage() {
                           </span>
                         )}
                       </div>
-                    </td>
+                    </td> */}
                     <td className="font-medium text-success">
-                      {formatCurrency(client.totalSpent)}
+                      {formatCurrency(340000)}
                     </td>
-                    <td className={client.outstandingBalance > 0 ? "font-medium text-warning" : "text-muted-foreground"}>
+                    <td
+                      className={
+                        client.outstandingBalance > 0
+                          ? "font-medium text-warning"
+                          : "text-muted-foreground"
+                      }
+                    >
                       {formatCurrency(client.outstandingBalance)}
                     </td>
-                    <td><StatusBadge status={client.status} /></td>
+                    <td>
+                      <StatusBadge
+                        status={client?.is_active ? "active" : "inactive"}
+                      />
+                    </td>
                     <td className="text-sm text-muted-foreground">
-                      {formatDate(client.createdAt)}
+                      {formatDate(client?.date_joined)}
                     </td>
                     <td className="text-right">
                       <DropdownMenu>
@@ -186,12 +228,26 @@ export default function ClientsPage() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem>View Profile</DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              navigate("/clients/profile", {
+                                state: {
+                                  userID: client?.id,
+                                },
+                              })
+                            }
+                          >
+                            View Profile{" "}
+                          </DropdownMenuItem>
                           <DropdownMenuItem>View Properties</DropdownMenuItem>
                           <DropdownMenuItem>Payment History</DropdownMenuItem>
-                          <DropdownMenuItem>Initiate Ownership Change</DropdownMenuItem>
+                          {/* <DropdownMenuItem>
+                            Initiate Ownership Change
+                          </DropdownMenuItem> */}
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-warning">Deactivate</DropdownMenuItem>
+                          <DropdownMenuItem className="text-warning">
+                            Deactivate
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </td>
