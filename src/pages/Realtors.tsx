@@ -25,6 +25,7 @@ import { COMMISSION_RULES } from '@/types';
 import { useUserListing } from '@/lib/axios_functions';
 import { UsersRealtorListingInterface } from '@/interfaces/general';
 import { useNavigate } from 'react-router-dom';
+import { CreateRealtor } from '@/components/users/add_new_realtors';
 
 
 
@@ -62,10 +63,7 @@ export default function RealtorsPage() {
         title="Realtors Management"
         description="Manage agents, track performance, and handle commissions"
       >
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Realtor
-        </Button>
+        <CreateRealtor />
       </PageHeader>
 
       {/* KPIs */}

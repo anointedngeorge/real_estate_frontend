@@ -40,6 +40,7 @@ import {
   UsersListingInterface,
 } from "@/interfaces/general";
 import { useNavigate } from "react-router-dom";
+import { CreateClient } from "@/components/users/add_new_clients";
 
 export default function ClientsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -76,10 +77,7 @@ export default function ClientsPage() {
         title="Clients Management"
         description="Manage clients, properties, and payment plans"
       >
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Client
-        </Button>
+        <CreateClient />
       </PageHeader>
 
       {/* KPIs */}

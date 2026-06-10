@@ -184,16 +184,18 @@ export const systemSettings = () => {
 };
 
 // users
-export const create_user = async (payload: Partial<CreateUserInterface>) => {
+export const create_object = async <T>(payload: Partial<T>, url?: string) => {
   try {
-    const response = await api.post("/auth/signup", payload);
+
+    const url_path = url? url : "/auth/signup";
+    const response = await api.post(url_path, payload);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(
         error.response?.data?.message ??
           error.response?.data?.detail ??
-          "Failed to create user",
+          "Failed to create object",
       );
     }
     throw error;

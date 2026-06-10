@@ -24,6 +24,7 @@ import UserProfilePage from "./pages/User_profile";
 import RealtorProfile from "./pages/realtor_profile";
 import ClientProfile from "./pages/cllient_profile";
 import PropertyDetails from "./pages/property_details";
+import AiChat from "./pages/AiChat";
 
 const queryClient = new QueryClient();
 
@@ -66,6 +67,10 @@ const App = () => (
             <Route path="/realtors" >
                 <Route path="list" element={<Realtors />} />
                 <Route path="profile" element={<RealtorProfile />} />
+            </Route>
+
+            <Route path="/ai" >
+                <Route path="chat" element={<AiChat />} />
             </Route>
 
   

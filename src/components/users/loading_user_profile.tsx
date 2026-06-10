@@ -41,7 +41,7 @@ import {
 import { Label } from "@/components/ui/label";
 import type { UserRole } from "@/types";
 import { Controller, useForm } from "react-hook-form";
-import { create_user } from "@/lib/axios_functions";
+import { create_object } from "@/lib/axios_functions";
 
 const roleLabels: Record<UserRole, string> = {
   super_admin: "Super Admin",
@@ -60,7 +60,7 @@ export const UserProfilePreview = () => {
 
   const formSubmitHandler = async (data) => {
     // console.log(data, "form data");
-    const user_creation = await create_user(data);
+    const user_creation = await create_object(data);
     console.log(user_creation);
   };
 

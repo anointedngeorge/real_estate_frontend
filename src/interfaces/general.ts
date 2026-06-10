@@ -68,6 +68,26 @@ export interface UsersRealtorListingInterface {
   unpaidCommission?: number;
 }
 
+
+export interface RealtorCreateInterface {
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string | null;
+  password: string,
+  sponsor?: string
+}
+
+
+export interface ClientCreateInterface {
+  email: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string | null;
+  password: string
+}
+
+
 export interface UsersListingQueryInterface {
   id?: string;
   exclude_users_roles?: string | null;

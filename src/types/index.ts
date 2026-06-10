@@ -16,8 +16,11 @@ export type PaymentStatus = "paid" | "due" | "overdue";
 export type PropertyStatus = "available" | "sold" | "reserved" | "archived";
 
 export type PaymentPlan = "outright" | "3_months" | "6_months" | "10_months";
+export type PropertyTypes = "land" | "house" | "apartment" | "commercial"
+export type FeatureTypes = "square" | "estate_features"
 
-// Commission Rules
+
+
 export const COMMISSION_RULES = {
   DIRECT: 0.1, // 10%
   DOWNLINER: 0.02, // 2%

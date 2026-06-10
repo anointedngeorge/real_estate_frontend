@@ -17,6 +17,7 @@ import {
   LogOut,
   Bell,
   ChevronDown,
+  MessageCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -37,6 +38,7 @@ const mainNavItems = [
   { icon: CreditCard, label: 'Payments', path: '/payments' },
   { icon: BarChart3, label: 'Analytics', path: '/analytics' },
   { icon: Share2, label: 'Marketing', path: '/marketing' },
+  { icon: MessageCircle, label: 'AI Chat', path: '/ai/chat' },
 ];
 
 const settingsNavItems = [

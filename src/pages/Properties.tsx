@@ -27,6 +27,7 @@ import type { PropertyStatus } from '@/types';
 import { useNavigate } from 'react-router-dom';
 import { useUserListing } from '@/lib/axios_functions';
 import { PropertyListInterface } from '@/interfaces/general';
+import { CreateProperties } from '@/components/users/add_new_properties';
 
 const propertyTypeIcons = {
   land: Landmark,
@@ -82,10 +83,7 @@ export default function PropertiesPage() {
         title="Properties Management"
         description="Manage property listings, availability, and assignments"
       >
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Property
-        </Button>
+        <CreateProperties />
       </PageHeader>
 
       {/* KPIs */}

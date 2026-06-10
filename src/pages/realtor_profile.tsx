@@ -160,6 +160,8 @@ export default function RealtorProfile() {
     if (confirm) {
       const user_suspend_account: ResponseInterface =
         await update_user_suspended(user_id);
+
+        // console.log(user_suspend_account)
       if (user_suspend_account?.status) {
         ToastComponent({
           title: "Account Suspended",
@@ -196,7 +198,7 @@ export default function RealtorProfile() {
         </Button>
       </PageHeader>
       <div
-        className={`md:col-span-1 p-3 border ${!profileData?.is_active ? "bg-red-100 border-red-200" : "bg-green-100 border-green-200"} rounded-md text-center `}
+        className={`md:col-span-1 p-3 border ${profileData?.is_active ? "bg-green-100 border-green-200"  : "bg-red-100 border-red-200" } rounded-md text-center `}
       >
         This Account is {profileData?.is_active ? "Active" : "Inactive"}
       </div>
