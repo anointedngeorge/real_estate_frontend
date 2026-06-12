@@ -31,44 +31,53 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { mockSales, mockProperties, mockClients, mockRealtors, mockSalesTrend, formatCurrency, formatDate, formatNumber } from '@/data/mockData';
+import { useUserListing } from '@/lib/axios_functions';
+import { SalesOutInterface } from '@/interfaces/general';
+import { CreateNewSales } from '@/components/sales/add_new_sales';
 
 const paymentPlanLabels = {
   outright: 'Outright',
-  '3_months': '3 Months',
-  '6_months': '6 Months',
-  '10_months': '10 Months',
+  '3': '3 Months',
+  '6': '6 Months',
+  '12': '12 Months',
 };
 
+
+interface Stats {
+    total: number;
+    total_revenue: number;
+    total_commission: number;
+    average: number;
+    month_sales_performance: string[];
+    amount: string;
+    total_sales: number
+} 
+
+
+
 export default function SalesPage() {
+
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
-  const filteredSales = mockSales.filter((sale) => {
-    const property = mockProperties.find(p => p.id === sale.propertyId);
-    const matchesSearch = property?.title.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || sale.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+   const { data, isLoading, error } = useUserListing({
+      page: 1,
+      size:30,
+      url: "/sales/list?",
+    });
 
-  const totalSales = mockSales.length;
-  const completedSales = mockSales.filter(s => s.status === 'completed').length;
-  const totalRevenue = mockSales.reduce((acc, s) => acc + s.amount, 0);
-  const totalCommission = mockSales.reduce((acc, s) => acc + s.commission.direct + s.commission.downliner, 0);
+  const sales: SalesOutInterface[] = data?.items;
 
-  const getPropertyTitle = (propertyId: string) => {
-    const property = mockProperties.find(p => p.id === propertyId);
-    return property?.title || 'Unknown Property';
-  };
+  // const filteredSales = sales?.filter((sale: SalesOutSchema) => {
+  //   const property = sales?.find(p => p.id === sale.id);
+  //   // const matchesSearch = property?.name.toLowerCase().includes(searchQuery.toLowerCase());
+  //   // const matchesStatus = statusFilter === 'all' || sale.status === statusFilter;
+  //   return [];
+  // });
 
-  const getClientName = (clientId: string) => {
-    const client = mockClients.find(c => c.id === clientId);
-    return client ? `${client.firstName} ${client.lastName}` : 'Unknown Client';
-  };
 
-  const getRealtorName = (realtorId: string) => {
-    const realtor = mockRealtors.find(r => r.id === realtorId);
-    return realtor ? `${realtor.firstName} ${realtor.lastName}` : 'Unknown Realtor';
-  };
+  const stats: Stats= data?.stats;
+  const performance_chart = stats?.month_sales_performance
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -76,6 +85,7 @@ export default function SalesPage() {
         title="Sales Management"
         description="Track sales performance, revenue, and commission distribution"
       >
+        <CreateNewSales />
         <Button variant="outline">
           <Download className="mr-2 h-4 w-4" />
           Export Report
@@ -86,27 +96,27 @@ export default function SalesPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KPICard
           title="Total Sales"
-          value={formatNumber(totalSales)}
-          subtitle={`${completedSales} completed`}
+          value={formatNumber(data?.count)}
+          subtitle={`${data?.count} completed`}
           icon={TrendingUp}
         />
         <KPICard
           title="Total Revenue"
-          value={formatCurrency(totalRevenue)}
+          value={formatCurrency(stats?.total_revenue)}
           subtitle="All time revenue"
           icon={DollarSign}
           variant="success"
         />
         <KPICard
           title="Total Commission"
-          value={formatCurrency(totalCommission)}
+          value={formatCurrency(stats?.total_commission)}
           subtitle="Realtor earnings"
           icon={Users}
           variant="accent"
         />
         <KPICard
           title="Avg. Sale Value"
-          value={formatCurrency(totalRevenue / totalSales)}
+          value={formatCurrency(stats?.total_revenue / stats?.total_sales)}
           subtitle="Per transaction"
           icon={Building2}
         />
@@ -118,7 +128,7 @@ export default function SalesPage() {
         subtitle="Sales count and revenue over time"
       >
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={mockSalesTrend}>
+          <BarChart data={performance_chart}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
             <XAxis 
               dataKey="month" 
@@ -184,34 +194,34 @@ export default function SalesPage() {
                 <th>Realtor</th>
                 <th>Amount</th>
                 <th>Payment Plan</th>
-                <th>Commission</th>
+                {/* <th>Commission</th> */}
                 <th>Status</th>
                 <th>Date</th>
                 <th className="text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredSales.map((sale) => (
+              {sales?.map((sale: SalesOutInterface ) => (
                 <tr key={sale.id}>
-                  <td className="font-medium">{getPropertyTitle(sale.propertyId)}</td>
-                  <td>{getClientName(sale.clientId)}</td>
-                  <td>{getRealtorName(sale.realtorId)}</td>
-                  <td className="font-medium">{formatCurrency(sale.amount)}</td>
+                  <td className="font-medium">{sale?.properties?.name}</td>
+                  <td>{`${sale.client?.first_name} ${sale.client?.last_name}`}</td>
+                  <td>{`${sale?.realtor?.first_name} ${sale?.realtor?.last_name}`}</td>
+                  <td className="font-medium">{formatCurrency(sale?.amount)}</td>
                   <td>
                     <span className="inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium">
-                      {paymentPlanLabels[sale.paymentPlan]}
+                      {paymentPlanLabels[sale.payment_plan]}
                     </span>
                   </td>
-                  <td>
+                  {/* <td>
                     <div className="space-y-0.5 text-xs">
-                      <div className="text-success">Direct: {formatCurrency(sale.commission.direct)}</div>
+                      <div className="text-success">Direct: {formatCurrency(sale.commission?.direct)}</div>
                       {sale.commission.downliner > 0 && (
                         <div className="text-info">Downline: {formatCurrency(sale.commission.downliner)}</div>
                       )}
                     </div>
-                  </td>
-                  <td><StatusBadge status={sale.status} /></td>
-                  <td className="text-muted-foreground">{formatDate(sale.createdAt)}</td>
+                  </td> */}
+                  <td><StatusBadge status={ 'in_progress' } /></td>
+                  <td className="text-muted-foreground">{formatDate(sale?.sales_date)}</td>
                   <td className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

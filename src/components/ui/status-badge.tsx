@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
-import type { PaymentStatus, PropertyStatus } from "@/types";
+import type { PaymentStatus, PropertyStatus, SalesStatusType } from "@/types";
 
-type StatusType = PaymentStatus | PropertyStatus | 'active' | 'inactive' | 'suspended' | 'pending' | 'approved' | 'paid' | 'completed' | 'in_progress' | 'cancelled';
+type StatusType =  PaymentStatus | PropertyStatus | 'active' | 'inactive' | 'suspended' | 'pending' | 'approved' | 'paid' | 'completed' | 'in_progress' | 'cancelled' ;
 
 interface StatusBadgeProps {
   status: StatusType;
@@ -32,6 +32,7 @@ const statusConfig: Record<StatusType, { label: string; variant: string }> = {
   // Sale Status
   completed: { label: 'Completed', variant: 'status-badge--success' },
   in_progress: { label: 'In Progress', variant: 'status-badge--info' },
+  
   cancelled: { label: 'Cancelled', variant: 'status-badge--error' },
 
 };

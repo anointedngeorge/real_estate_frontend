@@ -15,9 +15,10 @@ export type PaymentStatus = "paid" | "due" | "overdue";
 
 export type PropertyStatus = "available" | "sold" | "reserved" | "archived";
 
-export type PaymentPlan = "outright" | "3_months" | "6_months" | "10_months";
+export type PaymentPlan = "outright" | "3" | "6" | "12";
 export type PropertyTypes = "land" | "house" | "apartment" | "commercial"
 export type FeatureTypes = "square" | "estate_features"
+export type SalesStatusType = 'in_progress' | 'failed' | 'completed' | 'cancelled' | 'reversed'
 
 
 

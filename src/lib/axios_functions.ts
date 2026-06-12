@@ -59,6 +59,7 @@ export const get_user_details = async () => {
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
+      document.location.replace('/')
       throw new Error(error.response?.data?.detail ?? "Failed to fetch user");
     }
     throw error;

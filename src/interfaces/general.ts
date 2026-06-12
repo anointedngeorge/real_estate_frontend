@@ -1,3 +1,4 @@
+import { PaymentPlan, SalesStatusType } from "@/types";
 import { UUID } from "crypto";
 
 export interface ResponseInterface {
@@ -94,6 +95,7 @@ export interface UsersListingQueryInterface {
   page?: number;
   page_size?: number;
   url: string;
+  size?: number
 }
 
 export interface PropertyListInterface {
@@ -134,4 +136,29 @@ export interface PropertyInterface {
   actual_price: number;
   selling_price: number;
   features?: Record<string, any>;
+}
+
+
+export interface SalesOutInterface {
+    id: string;
+    properties : Record<string, string>;
+    client : Record<string, string>;
+    realtor : Record<string, string>;
+    payment_plan : string;
+    status : string;
+    amount : number
+    sales_date: string;
+    sales_date_time: string;
+    year: number;
+    month: number;
+    commission: Record<string, string>;
+}
+
+export interface SalesInInterface {
+    properties_id : string;
+    client : string;
+    realtor : string;
+    payment_plan : PaymentPlan;
+    status : SalesStatusType;
+    amount : number
 }

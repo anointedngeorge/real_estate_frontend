@@ -51,6 +51,11 @@ export default function ClientsPage() {
     page: 1,
     url: "/client/list?",
   });
+  
+  const kpi = {
+    'count': data?.count
+  }
+  console.log(data?.count)
 
   const filteredClients = data?.items?.filter(
     (client: ClientListingInterface) => {
@@ -84,7 +89,7 @@ export default function ClientsPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KPICard
           title="Total Clients"
-          value={formatNumber(totalClients)}
+          value={formatNumber(kpi.count)}
           subtitle={`${activeClients} active`}
           icon={FileText}
         />
