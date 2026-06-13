@@ -72,10 +72,6 @@ export default function PropertiesPage() {
     return matchesSearch && matchesStatus && matchesType;
   });
 
-  const totalProperties = mockProperties.length;
-  const availableProperties = mockProperties.filter(p => p.status === 'available').length;
-  const soldProperties = mockProperties.filter(p => p.status === 'sold').length;
-  const totalValue = mockProperties.reduce((acc, p) => acc + p.price, 0);
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -185,7 +181,7 @@ export default function PropertiesPage() {
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   <div className="absolute top-3 right-3">
-                    {`${property.status}`.charAt(0).toUpperCase() + `${property.status}`.substring(1)}
+                    
                     <StatusBadge status={checkStatus(property, 'reserved')} />
                   </div>
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">

@@ -136,6 +136,8 @@ export interface PropertyInterface {
   actual_price: number;
   selling_price: number;
   features?: Record<string, any>;
+  // 
+  plots?:Record<string, any>[]
 }
 
 

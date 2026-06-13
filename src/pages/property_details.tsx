@@ -36,6 +36,9 @@ import { formatCurrency } from "@/data/mockData";
 import { FeaturesLabel, PropertyLabel, StatusLabel } from "@/data/constant";
 import { v4 as uuidv4 } from "uuid";
 
+
+
+
 const Features = ({ control, id, removeFeature , features, profileRegister}) => {
   const status = features.length > 1 ? false : true;
   return (
