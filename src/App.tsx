@@ -25,12 +25,12 @@ import RealtorProfile from "./pages/realtor_profile";
 import ClientProfile from "./pages/cllient_profile";
 import PropertyDetails from "./pages/property_details";
 import AiChat from "./pages/AiChat";
+import SalesDetails from "./pages/sales_details";
 
 const queryClient = new QueryClient();
 
-
 const App = () => (
-  <QueryClientProvider client={queryClient} >
+  <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
@@ -42,38 +42,38 @@ const App = () => (
           {/* how do i pass general data like a provider to this route */}
           <Route element={<DashboardLayout />}>
             <Route path="/dashboard" element={<Overview />} loader={true} />
-            <Route path="/users" >
-                  <Route path="list" element={<Users />} /> 
-                  <Route path="profile" element={<UserProfilePage />}  />
+            <Route path="/users">
+              <Route path="list" element={<Users />} />
+              <Route path="profile" element={<UserProfilePage />} />
             </Route>
-            
-            <Route path="/clients" >
+
+            <Route path="/clients">
               <Route path="list" element={<Clients />} />
               <Route path="profile" element={<ClientProfile />} />
             </Route>
-            
-            <Route path="/properties" >
+
+            <Route path="/properties">
               <Route path="list" element={<Properties />} />
               <Route path="details" element={<PropertyDetails />} />
-
             </Route>
-            <Route path="/sales" element={<Sales />} />
+            <Route path="/sales">
+              <Route path="list" element={<Sales />} />
+              <Route path="details" element={<SalesDetails />} />
+            </Route>
             <Route path="/payments" element={<Payments />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/marketing" element={<Marketing />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/profile" element={<Profile />} />
-            
-            <Route path="/realtors" >
-                <Route path="list" element={<Realtors />} />
-                <Route path="profile" element={<RealtorProfile />} />
+
+            <Route path="/realtors">
+              <Route path="list" element={<Realtors />} />
+              <Route path="profile" element={<RealtorProfile />} />
             </Route>
 
-            <Route path="/ai" >
-                <Route path="chat" element={<AiChat />} />
+            <Route path="/ai">
+              <Route path="chat" element={<AiChat />} />
             </Route>
-
-  
           </Route>
 
           <Route path="*" element={<NotFound />} />

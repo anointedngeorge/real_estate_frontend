@@ -98,7 +98,7 @@ export const CreateProperties = () => {
   };
 
   function checkEmpty(data: Object) {
-    return Object.keys(data).length !== 0;
+    return Object.keys(data || {}).length !== 0;
   }
   // TODO: implement update  function
   const propertyHandler = async (e: PropertyInterface) => {
@@ -108,7 +108,7 @@ export const CreateProperties = () => {
 
     const plot_list = [];
 
-    Object.keys(plot_number).map((item, index) => {
+    Object.keys(plot_number || {}).map((item, index) => {
       let pList = {};
       if (checkEmpty(plot_number[item]) && checkEmpty(plot_price[item])) {
         pList["plot_number"] = plot_number[item];
@@ -189,16 +189,24 @@ export const CreateProperties = () => {
               />
             </div>
             <div className="space-y-2">
+              <Label htmlFor="selling_price">Selling Price</Label>
+              <Input
+                id="selling_price"
+
+                {...register("selling_price", { required: false })}
+              />
+            </div>
+          </div>
+
+          {/* price information */}
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
               <Input
                 id="description"
                 {...register("description", { required: true })}
               />
             </div>
-          </div>
-
-          {/* price information */}
-          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="lastName">Property Type</Label>
               <Controller

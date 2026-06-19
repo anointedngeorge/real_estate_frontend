@@ -1,3 +1,5 @@
+import { ReferralRealtorList } from "./general";
+
 export interface UserProfile {
   id: string;
   first_name: string;
@@ -16,6 +18,23 @@ export interface UserProfile {
   referral_code?:string,
   permissions: Record<string, { id: string, name: string }[]>;
 }
+
+
+export interface RealtorShortProfile {
+  id: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  email: string;
+  is_active?: boolean;
+  account_name?: string,
+  bank_name?: string,
+  bank_type?: string,
+  bank_number?:string,
+  referral_code?:string,
+  referralList : ReferralRealtorList
+}
+
 
 export interface UserProfileUpdate {
   first_name: string;

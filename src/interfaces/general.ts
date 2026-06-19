@@ -1,5 +1,6 @@
 import { PaymentPlan, SalesStatusType } from "@/types";
 import { UUID } from "crypto";
+import { RealtorShortProfile } from "./auth";
 
 export interface ResponseInterface {
   message: string;
@@ -98,6 +99,14 @@ export interface UsersListingQueryInterface {
   size?: number
 }
 
+
+export interface PropertyPlotsInterface {
+  id: string;
+  plot_number: number;
+  plot_price: number;
+  uid: string;
+}
+
 export interface PropertyListInterface {
   id: string;
   name: string;
@@ -107,8 +116,9 @@ export interface PropertyListInterface {
   status: string;
   property_types: string;
   actual_price: number;
-  selling_price: number;
+  selling_price?: number;
   features?: Record<string, any>;
+  plots?: PropertyPlotsInterface[];
 }
 
 export interface PropertyUpdateInterface {
@@ -121,7 +131,7 @@ export interface PropertyUpdateInterface {
     status: string;
     property_types: string;
     actual_price: number;
-    selling_price: number;
+    selling_price?: number;
     features?: Record<string, any>;
   };
 }
@@ -141,11 +151,27 @@ export interface PropertyInterface {
 }
 
 
+export interface SalesPaymentPlanOutInterface {
+    id:string;
+    billing_name: string;
+    billing_period_number:number;
+    billing_amount_to_pay: number;
+    billing_date: string;
+    status: string;
+}
+
+
+export interface ReferralRealtorList {
+    realtor: RealtorShortProfile,
+    sponsor: RealtorShortProfile
+}
+
+
 export interface SalesOutInterface {
     id: string;
-    properties : Record<string, string>;
+    properties : PropertyInterface
     client : Record<string, string>;
-    realtor : Record<string, string>;
+    realtor : RealtorShortProfile;
     payment_plan : string;
     status : string;
     amount : number
@@ -154,6 +180,9 @@ export interface SalesOutInterface {
     year: number;
     month: number;
     commission: Record<string, string>;
+    payment_plan_spread?: Record<string, string>[];
+    referralList: ReferralRealtorList;
+    payment_plan_list: SalesPaymentPlanOutInterface[]
 }
 
 export interface SalesInInterface {
@@ -162,5 +191,11 @@ export interface SalesInInterface {
     realtor : string;
     payment_plan : PaymentPlan;
     status : SalesStatusType;
-    amount : number
+    amount : number;
+    plot_ids?: Record<string, any>;
+    plot_ids_price?: Record<string, any>;
+    plots?: string[]
+
 }
+
+

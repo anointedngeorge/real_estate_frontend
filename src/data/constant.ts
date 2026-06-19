@@ -40,8 +40,6 @@ export const SalesStatusLabel: Record<SalesStatusType, string> = {
     'reversed': 'Reversed'
 };
 export const PaymentPlanLabel: Record<PaymentPlan, string> = {
-    '6': "6-Months",
-    '3': '3-Months',
-    '12': '12-Months',
+    'installment': "Installment",
     'outright': 'Outright'
 };

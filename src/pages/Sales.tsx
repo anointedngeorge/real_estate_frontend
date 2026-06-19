@@ -34,6 +34,7 @@ import { mockSales, mockProperties, mockClients, mockRealtors, mockSalesTrend, f
 import { useUserListing } from '@/lib/axios_functions';
 import { SalesOutInterface } from '@/interfaces/general';
 import { CreateNewSales } from '@/components/sales/add_new_sales';
+import { useNavigate } from 'react-router-dom';
 
 const paymentPlanLabels = {
   outright: 'Outright',
@@ -59,6 +60,7 @@ export default function SalesPage() {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const navigate = useNavigate();
 
    const { data, isLoading, error } = useUserListing({
       page: 1,
@@ -205,7 +207,8 @@ export default function SalesPage() {
                 <tr key={sale.id}>
                   <td className="font-medium">{sale?.properties?.name}</td>
                   <td>{`${sale.client?.first_name} ${sale.client?.last_name}`}</td>
-                  <td>{`${sale?.realtor?.first_name} ${sale?.realtor?.last_name}`}</td>
+                  {/* {JSON.stringify(sale?.realtor)} */}
+                  <td>{`${sale?.realtor?.first_name} ${sale?.realtor?.last_name}`} </td>
                   <td className="font-medium">{formatCurrency(sale?.amount)}</td>
                   <td>
                     <span className="inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium">
@@ -232,7 +235,17 @@ export default function SalesPage() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>View Details</DropdownMenuItem>
+                        <DropdownMenuItem
+                        onClick={() =>
+                          navigate("/sales/details", {
+                            state: {
+                              saleID: sale?.id,
+                            },
+                          })
+                        }
+                      >
+                        View Details{" "}
+                      </DropdownMenuItem>
                         <DropdownMenuItem>View Payments</DropdownMenuItem>
                         <DropdownMenuItem>Commission Breakdown</DropdownMenuItem>
                         <DropdownMenuSeparator />

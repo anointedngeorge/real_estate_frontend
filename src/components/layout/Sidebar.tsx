@@ -34,7 +34,7 @@ const mainNavItems = [
   { icon: UserCheck, label: 'Realtors', path: '/realtors/list' },
   { icon: UserCircle, label: 'Clients', path: '/clients/list' },
   { icon: Building2, label: 'Properties', path: '/properties/list' },
-  { icon: TrendingUp, label: 'Sales', path: '/sales' },
+  { icon: TrendingUp, label: 'Sales', path: '/sales/list' },
   { icon: CreditCard, label: 'Payments', path: '/payments' },
   { icon: BarChart3, label: 'Analytics', path: '/analytics' },
   { icon: Share2, label: 'Marketing', path: '/marketing' },

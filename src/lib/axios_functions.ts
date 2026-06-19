@@ -189,6 +189,7 @@ export const create_object = async <T>(payload: Partial<T>, url?: string) => {
   try {
 
     const url_path = url? url : "/auth/signup";
+    console.log(url_path)
     const response = await api.post(url_path, payload);
     return response.data;
   } catch (error) {
@@ -235,6 +236,10 @@ export const user_listings = async (
 
     if (query.page) {
       params.append("page", query.page.toString());
+    }
+
+    if (query.size) {
+      params.append("size", query.size.toString());
     }
 
     if (query.page_size) {
